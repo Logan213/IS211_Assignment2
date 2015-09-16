@@ -17,7 +17,7 @@ logging.basicConfig(filename='errors.log', level=logging.ERROR)
 logger = logging.getLogger('assignment2')
 
 
-def downloaddata(url):
+def downloadData(url):
     """Opens a supplied URL link.
 
     Args:
@@ -37,7 +37,7 @@ def downloaddata(url):
     return datafile
 
 
-def processdata(datafile):
+def processData(datafile):
     """Processes a datafile containing information in .csv format.
 
     Args:
@@ -49,9 +49,9 @@ def processdata(datafile):
         a datetime object.
 
     Example:
-        >>> load = downloaddata('https://s3.amazonaws.com/cuny-is211-spring2015
+        >>> load = downloadData('https://s3.amazonaws.com/cuny-is211-spring2015
         /birthdays100.csv')
-        >>> processdata(load)
+        >>> processData(load)
         {'24': ('Stewart Bond', datetime.datetime(2008, 2, 15, 0, 0)),
          '25': ('Colin Turner', datetime.datetime(1994, 6, 6, 0, 0)}
     """
@@ -69,7 +69,7 @@ def processdata(datafile):
     return newdict
 
 
-def displayperson(id, persondata):
+def displayPerson(id, personData):
     """Looks up the id number in a supplied dictionary, and returns the name and
        date of birth associated with the id number.
 
@@ -91,30 +91,36 @@ def displayperson(id, persondata):
             No user found with that ID.
         """
     idnum = str(id)
-    if idnum in persondata.keys():
+    if idnum in personData.keys():
         print 'Person #{} is {} with a birthday of {}'.format(
-            id, persondata[idnum][0],
-            datetime.datetime.strftime(persondata[idnum][1], '%Y-%m-%d'))
+            id, personData[idnum][0],
+            datetime.datetime.strftime(personData[idnum][1], '%Y-%m-%d'))
     else:
         print 'No user found with that ID.'
 
 
 def main():
-    """Docstring."""
+    """Combines downloadData, processData, and displayPerson into one program to
+    be run from the command line.
+    """
     if not args.url:
         raise SystemExit
     try:
-        csvdata = downloaddata(args.url)
+        csvData = downloadData(args.url)
     except urllib2.URLError:
         print 'Please enter a valid URL.'
         raise
     else:
-        persondata = downloaddata(csvdata)
-        chooseid = int(raw_input('Please enter an ID# for lookup:'))
+        personData = processData(csvData)
+        chooseid = raw_input('Please enter an ID# for lookup:')
+        print chooseid
+        chooseid = int(chooseid)
         if chooseid <= 0:
+            print 'Number equal to or less than zero entered. Exiting program.'
             raise SystemExit
         else:
-            displayperson(chooseid, persondata)
+            displayPerson(chooseid, personData)
+            main()
 
 if __name__ == '__main__':
     main()
